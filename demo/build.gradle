@@ -30,6 +30,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
+task wrapper(type:Wrapper){
+    gradleVersion='2.9'
+}
 
 tasks.named('bootBuildImage') {
     builder = 'paketobuildpacks/builder-jammy-base:latest'
