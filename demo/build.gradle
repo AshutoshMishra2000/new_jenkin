@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.1.6-SNAPSHOT'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.projectlombok:lombok'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'mysql:mysql-connector-java:8.0.23'
+    testImplementation "io.rest-assured:rest-assured:5.1.1"
+    testImplementation "io.rest-assured:json-schema-validator:5.1.1"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('bootBuildImage') {
+    builder = 'paketobuildpacks/builder-jammy-base:latest'
+}
+
+test {
+    useJUnitPlatform()
+    failFast = true // Fail the build as soon as a test fails
+}
+
+task runApiTests(type: Test) {
+    description = 'Run API tests'
+    include '**/DemoApplicationTests.class'
+}
+
+check.dependsOn runApiTests
+
+task generateTestReports(type: TestReport) {
+    destinationDir = file("$buildDir/reports/tests")
+    doLast {
+        reports {
+            html.enabled = true
+            junitXml.enabled = true
+        }
+    }
+}
